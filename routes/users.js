@@ -1,25 +1,72 @@
 import express from 'express';
 import User from '../models/user.js';
+// import usersController from 'E:/codecool/react/bigProject/kato-meet-app/kato-meet-app-back/controllers/usersController.js';
+// await import(url.pathToFileURL('E:/codecool/react/bigProject/kato-meet-app/kato-meet-app-back/controllers/usersController.js').href);
+
+import usersController from '../controllers/usersController.js';
+// const usersController = require('../controllers/usersController');
+// import  usersController from '../controllers/usersController';
+
 //todo separate part of code to controllers
 
 const router = express.Router();
 
-router.route('/').get((req, res) => {
+router.route('/nextUserToDisplay').get((req, res) => {
+    User.findById('5fcfbfbd3269ec31f42cbd47')//req.id / receive loggeduser id from front
+        .then(loggedUser => {
+            // console.log('user')//helper print
+            // console.log(loggedUser.name)//helper print
+            User.find(
+                { $and: [
+                        { '_id': { $ne: loggedUser._id }},
+                        { '_id': { $nin: loggedUser.likedUsers }},
+                        { '_id': { $nin: loggedUser.dislikedUsers }}
+                    ]}
+            )
+                .then(user => {
+                    console.log(user);//helper print
+                    return res.status(200).send(user)
+                })
+        })
+        .catch(err => res.status(400).json(`Error: ${err}`))
+})
+
+//find logged user, compare likedBy with likedUsers and return matching
+router.route('/matches').get((req, res) => {
+    User.findById('5fcfbfbd3269ec31f42cbd47')//req.id / receive loggeduser id from front
+        .then(loggedUser => {
+            User.find(
+                { $and: [
+                        { '_id': { $in: loggedUser.likedUsers }},
+                        { '_id': { $in: loggedUser.likedBy}}
+                    ]}
+            )
+                .then(users => {
+                    console.log(users);//helper print
+                    return res.status(200).send(users)
+                })
+        })
+})
+
+router.get('/',(req, res) => {
     User.find()
         .then(users => res.json(users))
         .catch(err => res.status(400).json(`Error: ${err}`))
 })
 
+// router.route('/').get(usersController.getAllUsers);
+// router.get('/', usersController.getAllUsers) //???
+
 router.route('/add').post((req, res) => {
     const name = req.body.name;
-    const image = req.body.image;
+    // const image = req.body.image;
     const age = req.body.age;
     const email = req.body.email;
     const password = req.body.password;
 
     const newUser = new User({
         name,
-        image,
+        // image,
         age,
         email,
         password,
@@ -60,13 +107,5 @@ router.route('/update/:id').post((req, res) => {
         })
         .catch(err => res.status(400).json(`Error: ${err}`))
 })
-
-// router.route('/nextUserToDisplay').get((req, res) => {
-//     User.find()
-//         // .then(users => res.json(users.map(user => user.name === 'Magda'))))
-//         .then(users => res.json(users))
-//         .catch(err => res.status(400).json(`Error: ${err}`))
-// })
-// why it doesnt work?
 
 export default router;
