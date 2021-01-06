@@ -1,11 +1,6 @@
 import express from 'express';
 import User from '../models/user.js';
-// import usersController from 'E:/codecool/react/bigProject/kato-meet-app/kato-meet-app-back/controllers/usersController.js';
-// await import(url.pathToFileURL('E:/codecool/react/bigProject/kato-meet-app/kato-meet-app-back/controllers/usersController.js').href);
-
 import usersController from '../controllers/usersController.js';
-// const usersController = require('../controllers/usersController');
-// import  usersController from '../controllers/usersController';
 
 //todo separate part of code to controllers
 
@@ -48,64 +43,68 @@ router.route('/matches').get((req, res) => {
         })
 })
 
-router.get('/',(req, res) => {
-    User.find()
-        .then(users => res.json(users))
-        .catch(err => res.status(400).json(`Error: ${err}`))
-})
+// router.get('/',(req, res) => {
+//     User.find()
+//         .then(users => res.json(users))
+//         .catch(err => res.status(400).json(`Error: ${err}`))
+// })
 
-// router.route('/').get(usersController.getAllUsers);
-// router.get('/', usersController.getAllUsers) //???
+router.get('/', usersController.getAllUsers);
 
-router.route('/add').post((req, res) => {
-    const name = req.body.name;
-    // const image = req.body.image;
-    const age = req.body.age;
-    const email = req.body.email;
-    const password = req.body.password;
+// router.route('/add').post((req, res) => {
+//     const name = req.body.name;
+//     // const image = req.body.image;
+//     const age = req.body.age;
+//     const email = req.body.email;
+//     const password = req.body.password;
+//
+//     const newUser = new User({
+//         name,
+//         // image,
+//         age,
+//         email,
+//         password,
+//     })
+//
+//     newUser.save()
+//         .then(() => res.json(`User added: ${newUser}`))
+//         .catch(err => res.status(400).json(`Error: ${err}`))
+// })
 
-    const newUser = new User({
-        name,
-        // image,
-        age,
-        email,
-        password,
-    })
+router.post('/add', usersController.add);
 
-    newUser.save()
-        .then(() => res.json('User added!'))
-        .catch(err => res.status(400).json(`Error: ${err}`))
-})
+// router.route('/:id').get((req, res) => {
+//     User.findById(req.params.id)
+//         .then(user => res.json(user))
+//         .catch(err => res.status(400).json(`Error: ${err}`))
+// })
+router.get('/:id', usersController.findById);
 
-router.route('/:id').get((req, res) => {
-    User.findById(req.params.id)
-        .then(user => res.json(user))
-        .catch(err => res.status(400).json(`Error: ${err}`))
-})
+// router.route('/:id').delete((req, res) => {
+//     User.findByIdAndDelete(req.params.id)
+//         .then(user => res.json('User deleted'))
+//         .catch(err => res.status(400).json(`Error: ${err}`))
+// })
+router.delete('/:id', usersController.deleteById);
 
-router.route('/:id').delete((req, res) => {
-    User.findByIdAndDelete(req.params.id)
-        .then(user => res.json('User deleted'))
-        .catch(err => res.status(400).json(`Error: ${err}`))
-})
-
-router.route('/update/:id').post((req, res) => {
-    User.findById(req.params.id)
-        .then(user => {
-            user.name = req.body.name;
-            user.image = req.body.image;
-            user.age = req.body.age;
-            user.email = req.body.email;
-            user.password = req.body.password;
-            user.likedUsers = req.body.likedUsers;
-            user.dislikedUsers = req.body.dislikedUsers;
-            user.likedBy = req.body.likedBy;
-
-            user.save()
-                .then(() => res.json('User updated!'))
-                .catch(err => res.status(400).json(`Error: ${err}`))
-        })
-        .catch(err => res.status(400).json(`Error: ${err}`))
-})
+// router.route('/update/:id').post((req, res) => {
+//     User.findById(req.params.id)
+//         .then(user => {
+//             user.name = req.body.name;
+//             user.image = req.body.image;
+//             user.age = req.body.age;
+//             user.email = req.body.email;
+//             user.password = req.body.password;
+//             user.likedUsers = req.body.likedUsers;
+//             user.dislikedUsers = req.body.dislikedUsers;
+//             user.likedBy = req.body.likedBy;
+//
+//             user.save()
+//                 .then(() => res.json('User updated!'))
+//                 .catch(err => res.status(400).json(`Error: ${err}`))
+//         })
+//         .catch(err => res.status(400).json(`Error: ${err}`))
+// })
+router.put('/update/:id', usersController.updateUser);
 
 export default router;
