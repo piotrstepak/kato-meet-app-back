@@ -1,6 +1,41 @@
 import User from '../models/user.js';
 
 export default {
+    async nextUserToDisplay(req, res) {
+        try {
+            const loggedUserId = req.body.id;
+            const loggedUser = await User.findById(loggedUserId);
+            const userToDisplay = await User.findOne(
+                { $and: [
+                        { '_id': { $ne: loggedUser._id }},
+                        { '_id': { $nin: loggedUser.likedUsers }},
+                        { '_id': { $nin: loggedUser.dislikedUsers }}
+                    ]}
+            );
+
+            res.json(userToDisplay);
+        } catch (err) {
+            res.status(400).json(`Error: ${err}`);
+        }
+    },
+
+    async matches(req, res) {
+        try {
+            const loggedUserId = req.body.id;
+            const loggedUser = await User.findById(loggedUserId);
+            const users = await User.find(
+                { $and: [
+                        { '_id': { $in: loggedUser.likedUsers }},
+                        { '_id': { $in: loggedUser.likedBy }}
+                    ]}
+            );
+
+            res.status(200).send(users);
+        } catch (err) {
+            res.status(400).json(`Error: ${err}`);
+        }
+    },
+
     async getAllUsers(req, res) {
         try {
             const users = await User.find();
@@ -52,15 +87,10 @@ export default {
             user.email = email;
             user.password = password;
             await user.save();
+
             res.json(`User updated: ${user}`);
         } catch (err) {
             res.status(400).json(`Error: ${err}`)
         }
-    },
-
-    // async nextUserToDisplay(req, res) {
-    //     try {
-    //
-    //     }
-    // }
+    }
 }
