@@ -1,15 +1,21 @@
+import dotenv from 'dotenv';
+dotenv.config();
+
 import express from 'express';
 import mongoose from 'mongoose';
 import Cors from 'cors';
-import dotenv from 'dotenv';
 import usersRouter from './routes/users.js';
-import nextUserToDisplay from './routes/nextUserToDisplay.js';
+import authRouter from './routes/auth.js';
+import passport from "./config/passport.js";
+import { catchErrors, notFound } from "./middlewares/errors.js";
 
 //app config
-dotenv.config();
 const app = express();
 const port = process.env.PORT || 3001;
-const connectionUrl = process.env.CONNECTION_URL
+const connectionUrl = process.env.CONNECTION_URL;
+
+//passport config
+passport();
 
 //middlewares
 app.use(express.json());
@@ -26,8 +32,13 @@ mongoose.connect(connectionUrl, {
     useUnifiedTopology: true,
 })
 
+//routes config
 app.use('/users', usersRouter);
-app.use('/nextUserToDisplay', nextUserToDisplay);
+app.use('/auth', authRouter);
+
+//errors handling
+app.use(notFound);
+app.use(catchErrors);
 
 app.listen(port, () => {
     console.log(`Listening on localhost: ${port}`)
