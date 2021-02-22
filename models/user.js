@@ -7,7 +7,7 @@ const userSchema = new mongoose.Schema({
         required: true,
         minlength: 2
     },
-    image: String,
+    images: Array,
     age: {
         type: Number,
         // min: 18,
@@ -20,6 +20,8 @@ const userSchema = new mongoose.Schema({
         trim: true,
         required: true
     },
+    description: String,
+    sex: String,
     likedUsers: Array,
     dislikedUsers: Array,
     likedBy: Array,

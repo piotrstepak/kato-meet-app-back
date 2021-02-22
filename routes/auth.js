@@ -8,4 +8,6 @@ router.post('/login', passport.authenticate('local', { session: false }), authCo
 
 router.post('/register', authController.register);
 
+router.post('/registerMock', authController.registerMock);
+
 export default router;
