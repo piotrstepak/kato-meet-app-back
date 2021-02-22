@@ -6,9 +6,9 @@ import jwtAuth from "../middlewares/jwtAuth.js";
 
 const router = express.Router();
 
-router.get('/nextUserToDisplay', jwtAuth, usersController.nextUserToDisplay);
+router.post('/nextUserToDisplay', jwtAuth, usersController.nextUserToDisplay);
 
-router.get('/matches', jwtAuth, usersController.matches);
+router.post('/matches', jwtAuth, usersController.matches);
 
 router.get('/', usersController.getAllUsers);
 
@@ -18,6 +18,6 @@ router.get('/:id', usersController.findById);
 
 router.delete('/:id', usersController.deleteById);
 
-router.put('/update/:id', jwtAuth, usersController.updateUser);
+router.put('/update/:id', usersController.updateUser);
 
 export default router;
